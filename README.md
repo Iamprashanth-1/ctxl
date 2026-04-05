@@ -27,7 +27,7 @@ ctxl checkpoint   # Save session state for safe /clear workflows
 ## Installation
 
 ```bash
-pip install ctxl
+pip install ctxl-cli
 ```
 
 ## Quick Start

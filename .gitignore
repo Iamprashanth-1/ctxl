@@ -27,3 +27,6 @@ Thumbs.db
 tests/output.md
 tests/full_output.md
 tests/.github/
+
+# Credentials
+.pypirc

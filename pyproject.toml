@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ctxl-cli"
-version = "0.1.0"
+version = "0.3.0"
 description = "Context Engineering CLI — Reduce AI agent token waste with compressed codebase skeletons, task-focused instructions, and session checkpoints. Zero AI, pure parsing."
 readme = "README.md"
 license = {text = "MIT"}

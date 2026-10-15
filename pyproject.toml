@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ctxl-cli"
-version = "0.3.0"
-description = "Context Engineering CLI — Reduce AI agent token waste with compressed codebase skeletons, task-focused instructions, and session checkpoints. Zero AI, pure parsing."
+version = "0.4.0"
+description = "Context Engineering CLI — Reduce AI agent token waste with compressed codebase skeletons, task-focused instructions, session checkpoints, and AGENTOWNERS governance policy generation. Zero AI, pure parsing."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
@@ -15,6 +15,7 @@ authors = [
 keywords = [
     "context-engineering", "llm", "ai-agents", "token-optimization",
     "copilot", "tree-sitter", "codebase-map", "developer-tools",
+    "agentowners", "agent-governance", "ai-policy",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

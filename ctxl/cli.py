@@ -144,7 +144,22 @@ def _show_savings(path: str, result: str, file_count: int):
 @click.option("-f", "--focus", multiple=True, help="Files to focus on (can specify multiple: -f file1.py -f file2.py).")
 @click.option("--no-map", is_flag=True, help="Skip codebase map generation.")
 @click.option("-o", "--output", default=None, help="Custom output path (default: .github/copilot-instructions.md).")
-def init(task, directory, focus, no_map, output):
+@click.option(
+    "--with-policy",
+    is_flag=True,
+    help=(
+        "Also generate .github/AGENTOWNERS.yml — an AI agent governance policy "
+        "that restricts which paths agents may modify. Paths are inferred by "
+        "scanning the repo for CI workflows, auth code, infra, secrets, and "
+        "deployment scripts."
+    ),
+)
+@click.option(
+    "--policy-output",
+    default=None,
+    help="Custom output path for AGENTOWNERS.yml (default: .github/AGENTOWNERS.yml). Implies --with-policy.",
+)
+def init(task, directory, focus, no_map, output, with_policy, policy_output):
     """Generate a task-focused .github/copilot-instructions.md
 
     GitHub Copilot natively reads this file for workspace-level instructions.
@@ -152,11 +167,17 @@ def init(task, directory, focus, no_map, output):
     optionally embedding the codebase skeleton so Copilot understands your
     project structure without reading every file.
 
+    Use --with-policy to also generate .github/AGENTOWNERS.yml, an agent
+    governance policy file that controls what AI agents are allowed to touch.
+    The policy is inferred from your repo's directory structure — no AI
+    involved, just filesystem pattern matching.
+
     \b
     Examples:
         ctxl init "Fix the data pipeline ETL bug"
         ctxl init "Add user authentication" -f auth.py -f models.py
         ctxl init "Refactor tests" --no-map
+        ctxl init "Onboard agent" --with-policy
     """
     from ctxl.init import generate_instructions
 
@@ -173,6 +194,26 @@ def init(task, directory, focus, no_map, output):
 
     console.print(f"[green]✓[/green] Instructions written to [bold]{result_path}[/bold]")
     console.print("[dim]Copilot will automatically read this file for context.[/dim]")
+
+    # ── AGENTOWNERS policy generation ─────────────────────────────────────────
+    if with_policy or policy_output:
+        from ctxl.policy import generate_policy, scan_repository, summarise_signals
+        from pathlib import Path
+
+        with console.status("[bold cyan]Scanning repo for governance signals...", spinner="dots"):
+            signals = scan_repository(Path(directory).resolve())
+            policy_path = generate_policy(
+                project_root=directory,
+                output_path=policy_output,
+            )
+
+        console.print(f"\n[green]✓[/green] AGENTOWNERS policy written to [bold]{policy_path}[/bold]")
+        console.print("[dim]Detected signals:[/dim]")
+        console.print(summarise_signals(signals))
+        console.print(
+            "\n[dim]To enforce this policy, add the AGENTOWNERS GitHub Action:[/dim]\n"
+            "[dim]  https://github.com/cschanhniem/AGENTOWNERS#quick-start[/dim]"
+        )
 
 
 # ─── ctxl checkpoint ───────────────────────────────────────────────────────────
